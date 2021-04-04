@@ -12,8 +12,8 @@ unsigned short ledBrightness[3] = {0, 0, 0};
 bool canTrigger[3] = {0, 0, 0};
 unsigned short scalar[3] = {1, 1, 1};
 
-unsigned long triggerQueue[10][3]; // the delay times
-unsigned short bufferSize = 10; //total number of elements in the buffer
+unsigned long triggerQueue[75][3]; // the delay times
+unsigned short bufferSize = 75; //total number of elements in the buffer
 unsigned short bufferLength[3] = {0, 0, 0};  //number of elements filled atm
 unsigned short readIndex[3] = {0, 0, 0};
 unsigned short writeIndex[3] = {0, 0, 0};
@@ -51,10 +51,7 @@ void loop()
     if(buttonState != lastButtonState)
     {
         if(buttonState == LOW)
-        {
             delayTrigger(0);
-            Serial.println(maxLedBrightness);
-        }
     }
     
     lastButtonState = buttonState;
