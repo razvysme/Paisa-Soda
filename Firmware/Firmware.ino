@@ -1,6 +1,31 @@
-unsigned short buttonPin = 2;
-const unsigned short leds[3] = {11, 10, 9};
+// =============================================================================
+// Pinout declaration
+// =============================================================================
+// Analog
+/* These are the pins, used dirrectly to save memory
+int delayPot1 = 0;
+int delayPot2 = 1;
+int delayPot3 = 2;
 
+int timeSwitch1 = 3;
+int timeSwitch2 = 4;
+int timeSwithc3 = 5;
+*/
+
+//Digital
+unsigned short input = 1;
+unsigned short triggerButtonLED = 13;
+unsigned short outAll = 2;
+unsigned short outOne = 4;
+unsigned short outTwo = 7;
+unsigned short outThree = 8;
+
+unsigned short buttonPin = 12;
+const unsigned short leds[3] = {3, 5, 6};
+
+// =============================================================================
+// Global variables
+// =============================================================================
 bool lastButtonState = 1;
 bool buttonState = 0;
 
@@ -10,17 +35,19 @@ unsigned short fadeTime = 17;
 int delayTime[3] = {1000, 1000, 1500};
 unsigned short ledBrightness[3] = {0, 0, 0};
 bool canTrigger[3] = {0, 0, 0};
-unsigned short scalar[3] = {1, 1, 1};
+unsigned short timeScalar[3] = {1, 1, 1};
 
-unsigned long triggerQueue[75][3]; // the delay times
-unsigned short bufferSize = 75; //total number of elements in the buffer
+// =============================================================================
+// Trigger queue vectors
+// =============================================================================
+unsigned short bufferSize = 100; //total number of elements in the buffer; unused ATM
+unsigned long triggerQueue[100][3]; // the delay times
 unsigned short bufferLength[3] = {0, 0, 0};  //number of elements filled atm
 unsigned short readIndex[3] = {0, 0, 0};
 unsigned short writeIndex[3] = {0, 0, 0};
 
 void setup()
 {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(buttonPin, INPUT_PULLUP); 
   pinMode(leds[0], OUTPUT);
@@ -34,9 +61,9 @@ void loop()
 {
     //reading inputs
     buttonState = digitalRead(buttonPin);
-    delayTime[0] = analogRead(0) * scalar[0];
-    delayTime[1] = analogRead(1) * scalar[1];
-    delayTime[2] = analogRead(2) * scalar[2];
+    delayTime[0] = analogRead(0) * timeScalar[0];
+    delayTime[1] = analogRead(1) * timeScalar[1];
+    delayTime[2] = analogRead(2) * timeScalar[2];
     
     //this is where the output is triggered aka OUTPUT
     for(int stage = 0; stage < 3; stage++)

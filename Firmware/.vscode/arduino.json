@@ -1,0 +1,7 @@
+{
+    "port": "COM6",
+    "board": "arduino:avr:nano",
+    "sketch": "Firmware.ino",
+    "output": "../build",
+    "configuration": "cpu=atmega328old"
+}
