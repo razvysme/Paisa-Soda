@@ -26,7 +26,7 @@ unsigned short input = 1;
 unsigned short buttonPin = 12;
 
 unsigned short outputs [4] ={4, 7, 8, 2}; // one two three and all
-const unsigned short leds[4] = {3, 5, 6, 13}; // one two three and buttonLED
+const unsigned short leds[4] = {3, 5, 6, 9}; // one two three and buttonLED
 
 // =============================================================================
 // Global variables
@@ -41,6 +41,7 @@ unsigned short ledBrightness[4] = {0, 0, 0, 0};
 bool outputState[4] = {0, 0, 0, 0};
 int delayTime[3] = {1000, 1000, 1500};
 bool canTrigger[3] = {0, 0, 0};
+bool canOutput[3] = {0, 0, 0};
 unsigned short timeScalar[3] = {1, 1, 1};
 
 
@@ -60,10 +61,13 @@ void setup()
 {
     Serial.begin(9600);
     pinMode(buttonPin, 0x2);
-    pinMode(leds[0], 0x1);
-    pinMode(leds[1], 0x1);
-    pinMode(leds[2], 0x1);
-    pinMode(leds[3], 0x1);
+
+    for (unsigned short i = 2; i < 10; i++)
+    {
+        pinMode(leds[i], 0x1);
+        Serial.print("Pin set to Output: ");
+        Serial.println(i);
+    }
 
     maxLedBrightness = (255 / fadeTime) * fadeTime;
 }
@@ -76,14 +80,49 @@ void loop()
     delayTime[1] = analogRead(1) * timeScalar[1];
     delayTime[2] = analogRead(2) * timeScalar[2];
 
+     // OUTPUT TRIGGERS
+    for(int i = 0; i < 4; i++)
+    {
+
+        if (triggerQueue[readIndex[i]][i] + delayTime[i] + gateLength < millis() && outputState[i])
+        {
+            //analogWrite(outputs[i], 255);
+            //analogWrite(outputs[3], 255);
+            analogWrite(outputs[i], 0);
+            analogWrite(outputs[3], 0);
+            Serial.print("disabling output: ");
+            Serial.print(i);
+            Serial.print(" at time: ");
+            Serial.print(millis());
+            Serial.print(" because trigger queue is: ");
+            Serial.print(triggerQueue[readIndex[i]][i]);
+            Serial.print(", and delay is: ");
+            Serial.print(delayTime[i]);
+            Serial.print(", and their sum is: ");
+            Serial.println(triggerQueue[readIndex[i]][i] + delayTime[i]);
 
 
-    //this is where the output is triggered aka OUTPUT
+            outputState[i] = 0;
+        }
+    }
+
+    //this is where the LEDS are lit
     for(int stage = 0; stage < 3; stage++)
     {
         if (triggerQueue[readIndex[stage]][stage] + delayTime[stage] < millis() && canTrigger[stage])
         {
             trigger(stage);
+
+            // Serial.print("turning on LED: ");
+            // Serial.print(stage);
+            // Serial.print(" at time: ");
+            // Serial.print(millis());
+            // Serial.print(" because trigger queue is: ");
+            // Serial.print(triggerQueue[readIndex[stage]][stage]);
+            // Serial.print(", and delay is: ");
+            // Serial.print(delayTime[stage]);
+            // Serial.print(", and their sum is: ");
+            // Serial.println(triggerQueue[readIndex[stage]][stage] + delayTime[stage]);
         }
     }
 
@@ -94,6 +133,7 @@ void loop()
         {
             delayTrigger(0);
             ledBrightness[3] = maxLedBrightness;
+            analogWrite(outputs[3], 255);
         }
     }
     lastButtonState = buttonState;
@@ -107,7 +147,6 @@ void loop()
         }
     }
 
-
     // FADE
     for(int i = 0; i < 4; i++)
     {
@@ -116,25 +155,9 @@ void loop()
 
         analogWrite(leds[i], ledBrightness[i]);
     }
-    // OUTPUT TRIGGERS
-    for(int i = 0; i < 3; i++)
-    {
-        if(ledBrightness[i] > 230 && analogRead(i) > 10)
-        {
-            analogWrite(outputs[i], 255);
-            analogWrite(outputs[3], 255);
-        }
-        else
-        {
-           analogWrite(outputs[i], 0);
-           analogWrite(outputs[3], 0);
-        }
-    }
-
 
     delay(10);
 }
-
 
 void delayTrigger(unsigned short stage)
 {
@@ -142,9 +165,9 @@ void delayTrigger(unsigned short stage)
     {
         Serial.println("Buffer is full!");
     }
-
     triggerQueue[writeIndex[stage]][stage] = millis();
     canTrigger[stage] = 1;
+    //canOutput[stage] = 1;    
     writeIndex[stage]++;
     bufferLength[stage]++;
     if(writeIndex[stage] == bufferSize)
@@ -156,10 +179,19 @@ void trigger(unsigned short stage)
     //output trigger
     if(analogRead(stage) > 10)
     {
+        //set LED value MAX and output it
         ledBrightness[stage] = maxLedBrightness;
         analogWrite(leds[stage], ledBrightness[stage]);
+
+        //Set Gate outputs to max
         outputState[stage] = 1;
         outputState[3] = 1;
+        analogWrite(outputs[stage], 255);
+        analogWrite(outputs[3], 255);
+        Serial.print("triggering output: ");
+        Serial.print(stage);
+        Serial.print(", at time: ");
+        Serial.println(millis());
     }
     //advance buffer
     bufferLength[stage]--;

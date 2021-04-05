@@ -421,7 +421,7 @@ Connection ~ 6900 2800
 Wire Wire Line
 	6600 2900 6900 2900
 Text GLabel 6050 3000 0    50   Input ~ 0
-D13
+D9
 $Comp
 L Device:R R2
 U 1 1 608079EF

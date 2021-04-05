@@ -713,7 +713,7 @@ F 3 "" H 10150 4100 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	10150 1950 10150 2050
-Text GLabel 10250 2250 2    50   Input ~ 0
+Text GLabel 10550 2250 2    50   Input ~ 0
 D2
 Wire Wire Line
 	10000 2250 10250 2250
@@ -746,7 +746,7 @@ Wire Wire Line
 Wire Wire Line
 	9600 2950 10150 2950
 Connection ~ 10150 2950
-Text GLabel 10250 2750 2    50   Input ~ 0
+Text GLabel 10550 2750 2    50   Input ~ 0
 D4
 Wire Wire Line
 	10000 2750 10250 2750
@@ -794,7 +794,7 @@ Wire Wire Line
 Connection ~ 10150 3950
 Wire Wire Line
 	10150 3950 10150 4100
-Text GLabel 10250 3250 2    50   Input ~ 0
+Text GLabel 10550 3250 2    50   Input ~ 0
 D7
 Wire Wire Line
 	10000 3750 10250 3750
@@ -1425,7 +1425,7 @@ F 7 "May 7, 2019" H 3550 2200 50  0001 L BNN "PARTREV"
 	1    3550 2200
 	0    1    1    0   
 $EndComp
-Text GLabel 10250 3750 2    50   Input ~ 0
+Text GLabel 10550 3750 2    50   Input ~ 0
 D8
 $Comp
 L Connector_Generic:Conn_02x03_Odd_Even JP2
@@ -1437,5 +1437,49 @@ F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical_SMD" H 1750 5000
 F 3 "~" H 1750 5000 50  0001 C CNN
 	1    1750 5000
 	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R6
+U 1 1 606B9DBE
+P 10400 2250
+F 0 "R6" V 10300 2150 50  0000 C CNN
+F 1 "1K" V 10300 2300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 10330 2250 50  0001 C CNN
+F 3 "~" H 10400 2250 50  0001 C CNN
+	1    10400 2250
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R7
+U 1 1 606BA97F
+P 10400 2750
+F 0 "R7" V 10300 2650 50  0000 C CNN
+F 1 "1K" V 10300 2800 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 10330 2750 50  0001 C CNN
+F 3 "~" H 10400 2750 50  0001 C CNN
+	1    10400 2750
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R11
+U 1 1 606BB499
+P 10400 3250
+F 0 "R11" V 10300 3150 50  0000 C CNN
+F 1 "1K" V 10300 3300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 10330 3250 50  0001 C CNN
+F 3 "~" H 10400 3250 50  0001 C CNN
+	1    10400 3250
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R20
+U 1 1 606BB80B
+P 10400 3750
+F 0 "R20" V 10300 3650 50  0000 C CNN
+F 1 "1K" V 10300 3800 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 10330 3750 50  0001 C CNN
+F 3 "~" H 10400 3750 50  0001 C CNN
+	1    10400 3750
+	0    1    1    0   
 $EndComp
 $EndSCHEMATC
