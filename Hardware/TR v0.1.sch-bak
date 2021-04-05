@@ -133,17 +133,6 @@ Wire Wire Line
 	1800 4250 1800 4300
 Text GLabel 1400 4900 0    50   Input ~ 0
 D12
-$Comp
-L Connector_Generic:Conn_02x03_Odd_Even JP2
-U 1 1 606240DC
-P 1750 5000
-F 0 "JP2" H 1800 5317 50  0000 C CNN
-F 1 "AVR ISP" H 1800 5226 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical" H 1750 5000 50  0001 C CNN
-F 3 "~" H 1750 5000 50  0001 C CNN
-	1    1750 5000
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	2050 4900 2200 4900
 Text GLabel 2200 5000 2    50   Input ~ 0
@@ -1438,4 +1427,15 @@ F 7 "May 7, 2019" H 3550 2200 50  0001 L BNN "PARTREV"
 $EndComp
 Text GLabel 10250 3750 2    50   Input ~ 0
 D8
+$Comp
+L Connector_Generic:Conn_02x03_Odd_Even JP2
+U 1 1 606240DC
+P 1750 5000
+F 0 "JP2" H 1800 5317 50  0000 C CNN
+F 1 "AVR ISP" H 1800 5226 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical_SMD" H 1750 5000 50  0001 C CNN
+F 3 "~" H 1750 5000 50  0001 C CNN
+	1    1750 5000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
