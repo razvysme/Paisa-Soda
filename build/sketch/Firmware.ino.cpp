@@ -26,13 +26,12 @@ const unsigned short modeLed = 13;
 // Global variables
 // =============================================================================
 bool lastButtonState = 1;
-bool longTimeLastButtonState = 1;
 bool buttonState = 0;
 bool longTimeButtonState = 0;
 
 bool skipMode = 0;
 unsigned long lastButtonPressTime = 0;
-unsigned short holdTime = 1000;
+const unsigned short holdTime = 1000;
 
 unsigned short maxLedBrightness;
 unsigned short fadeTime = 15;
@@ -46,8 +45,6 @@ unsigned short timeScalar[3] = {1, 1, 1};
 unsigned int triggerTime[4];
 const unsigned short gateLength = 50;
 
-int
-
 // =============================================================================
 // Trigger queue vectors
 // =============================================================================
@@ -57,15 +54,15 @@ unsigned short bufferLength[3] = {0, 0, 0};  //number of elements filled atm
 unsigned short readIndex[3] = {0, 0, 0};
 unsigned short writeIndex[3] = {0, 0, 0};
 
-#line 58 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 55 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void setup();
-#line 74 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 71 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void loop();
-#line 152 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 151 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void delayTrigger(unsigned short stage);
-#line 166 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 165 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void trigger(unsigned short stage);
-#line 58 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 55 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void setup()
 {
     Serial.begin(9600);
@@ -89,6 +86,7 @@ void loop()
     delayTime[0] = analogRead(0) * timeScalar[0];
     delayTime[1] = analogRead(1) * timeScalar[1];
     delayTime[2] = analogRead(2) * timeScalar[2];
+
     //Turn off TRIGGERS
     for(unsigned short i = 0; i < 3; i++)
     {
@@ -104,7 +102,7 @@ void loop()
         analogWrite(outputs[3], 0);
         outputState[3] = 0; 
     }
-    //this is where the LEDS are lit
+    //Turn on LEDs
     for(unsigned short stage = 0; stage < 3; stage++)
     {
         if (triggerQueue[readIndex[stage]][stage] + delayTime[stage]  < millis() && canTriggerLed[stage])
@@ -112,34 +110,35 @@ void loop()
             trigger(stage);
         } 
     }
-    //this is wher the button is pressed aka INPUT
+    //Detect button press
     if(buttonState != lastButtonState)
     {
-        lastButtonPressTime = millis();
         if(buttonState == LOW)
         {
             delayTrigger(0);
             ledBrightness[3] = maxLedBrightness;
-            analogWrite(outputs[3], 255);
-            outputState[3] = 1;
+            Serial.print(skipMode);
+            if(skipMode == 0)
+            {
+                analogWrite(outputs[3], 255);
+                outputState[3] = 1;
+                Serial.println(", andtriggering first");
+            }
+            lastButtonPressTime = millis();
         }
     }
     lastButtonState = buttonState;
-
+    //Detect button hold & switch mode
     if (lastButtonPressTime + holdTime < millis())
     {
-        if (digitalRead(buttonPin) == longTimeButtonState) 
+        if (digitalRead(buttonPin) != longTimeButtonState) 
         {
+            longTimeButtonState = digitalRead(buttonPin);
             if (longTimeButtonState == LOW)
-            skipMode = !skipMode;
-            longTimeButtonState != longTimeButtonState;
+                skipMode =! skipMode;
         }
      }
     digitalWrite(modeLed, skipMode);
-    lastButtonState = buttonState;
-
-
-
     //blinking skip function
     for (unsigned short i = 0; i < 3; i++)
     {
