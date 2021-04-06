@@ -1,2 +1,4 @@
 # Paisa-Soda
-A triple trigger delay for Eurorack systems.
+A triple trigger delay for Eurorack systems. - WIP
+
+
