@@ -1,5 +1,29 @@
 #include <Arduino.h>
 #line 1 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+// Copyright 2021 Razvan Paisa.
+//
+// Author: Razvan Paisa (razvan@paisa.dk)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+// 
+// See http://creativecommons.org/licenses/MIT/ for more information.
+
 // =============================================================================
 // Pinout declaration
 // =============================================================================
@@ -29,6 +53,9 @@ bool lastButtonState = 1;
 bool buttonState = 0;
 bool longTimeButtonState = 0;
 
+bool inputTriggerState = 0;
+bool lastinputTriggerState = 1;
+
 bool skipMode = 0;
 unsigned long lastButtonPressTime = 0;
 const unsigned short holdTime = 1000;
@@ -54,15 +81,15 @@ unsigned short bufferLength[3] = {0, 0, 0};  //number of elements filled atm
 unsigned short readIndex[3] = {0, 0, 0};
 unsigned short writeIndex[3] = {0, 0, 0};
 
-#line 55 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 82 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void setup();
-#line 71 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 98 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void loop();
-#line 151 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 199 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void delayTrigger(unsigned short stage);
-#line 165 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 213 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void trigger(unsigned short stage);
-#line 55 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
+#line 82 "e:\\Work projects\\Paisa-Soda\\Firmware\\Firmware.ino"
 void setup()
 {
     Serial.begin(9600);
@@ -86,6 +113,29 @@ void loop()
     delayTime[0] = analogRead(0) * timeScalar[0];
     delayTime[1] = analogRead(1) * timeScalar[1];
     delayTime[2] = analogRead(2) * timeScalar[2];
+
+    //detect analog trigger input
+    if(analogRead(6) < 500) //arbitrary voltage :)
+        inputTriggerState = 1;
+    else
+        inputTriggerState = 0;
+
+    if(inputTriggerState != lastinputTriggerState)   
+    {
+        //Serial.println(inputTriggerState);
+        if(inputTriggerState == 1)
+        {
+            delayTrigger(0);
+            ledBrightness[3] = maxLedBrightness;
+            if(skipMode == 0)
+            {
+                analogWrite(outputs[3], 255);
+                outputState[3] = 1;
+            }
+            lastButtonPressTime = millis();
+        }
+    }
+    lastinputTriggerState = inputTriggerState;
 
     //Turn off TRIGGERS
     for(unsigned short i = 0; i < 3; i++)
@@ -117,12 +167,10 @@ void loop()
         {
             delayTrigger(0);
             ledBrightness[3] = maxLedBrightness;
-            Serial.print(skipMode);
             if(skipMode == 0)
             {
                 analogWrite(outputs[3], 255);
                 outputState[3] = 1;
-                Serial.println(", andtriggering first");
             }
             lastButtonPressTime = millis();
         }
@@ -156,7 +204,7 @@ void loop()
         analogWrite(leds[i], ledBrightness[i]);
     }
     //remember to remove the delay
-    delay(10); 
+    //delay(10); 
 }
 
 void delayTrigger(unsigned short stage)
