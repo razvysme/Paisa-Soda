@@ -59,7 +59,7 @@ unsigned long lastButtonPressTime = 0;
 const unsigned short holdTime = 1000;
 
 unsigned short maxLedBrightness;
-unsigned short fadeTime = 15;
+unsigned short fadeTime = 1;
 
 unsigned short ledBrightness[4] = {0, 0, 0, 0};
 bool outputState[4] = {0, 0, 0, 0}; 
@@ -104,14 +104,13 @@ void loop()
     delayTime[2] = analogRead(2) * timeScalar[2];
 
     //detect analog trigger input
-    if(analogRead(6) < 500) //arbitrary voltage :)
+    if(analogRead(6) < 50) //arbitrary voltage :)
         inputTriggerState = 1;
     else
         inputTriggerState = 0;
-
+    //
     if(inputTriggerState != lastinputTriggerState)   
     {
-        //Serial.println(inputTriggerState);
         if(inputTriggerState == 1)
         {
             delayTrigger(0);
@@ -121,7 +120,6 @@ void loop()
                 analogWrite(outputs[3], 255);
                 outputState[3] = 1;
             }
-            lastButtonPressTime = millis();
         }
     }
     lastinputTriggerState = inputTriggerState;
